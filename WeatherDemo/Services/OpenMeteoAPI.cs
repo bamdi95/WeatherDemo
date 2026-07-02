@@ -5,7 +5,7 @@ using WeatherDemo.Models;
 
 namespace WeatherDemo.Services
 {
-    public class OpenMeteoAPI : IOpenMeteoAPI
+    public class OpenMeteoAPI : IWeatherProviderAPI
     {
         private readonly HttpClient _client;
         private readonly ILogger<OpenMeteoAPI> _logger;
