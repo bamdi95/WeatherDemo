@@ -3,10 +3,14 @@
 GET {{WeatherDemo_HostAddress}}/weatherdemo/?latitude=47.4984&longitude=19.0404
 Accept: application/json
 
-###
-
+###budapest
 
 GET {{WeatherDemo_HostAddress}}/weatherdemo/?latitude=0&longitude=0
 Accept: application/json
 
 ###
+
+GET {{WeatherDemo_HostAddress}}/weatherdemo/?latitude=46.264489&longitude=20.164786
+Accept: application/json
+
+###Dani
