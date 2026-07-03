@@ -1,11 +1,11 @@
 ﻿using System.Globalization;
 using System.Text.Json;
 using WeatherDemo.Interfaces;
-using WeatherDemo.Models;
+using WeatherDemo.Models.OpenMeteo;
 
 namespace WeatherDemo.Services
 {
-    public class OpenMeteoAPI : IWeatherProviderAPI
+    public class OpenMeteoAPI : IWeatherProvider
     {
         private readonly HttpClient _client;
         private readonly ILogger<OpenMeteoAPI> _logger;
@@ -17,7 +17,7 @@ namespace WeatherDemo.Services
             _logger = logger;
         }
 
-        public async Task<IWeatherData> GetWeatherDataAsync(double latitude, double longitude, CancellationToken token)
+        public async Task<IOpenMeteoWeatherData> GetWeatherDataAsync(double latitude, double longitude, CancellationToken token)
         {
             _logger.LogInformation("Getting weather data from open-meteo api for {Latitude}, {Longitude}", latitude, longitude);
 
@@ -32,7 +32,7 @@ namespace WeatherDemo.Services
                 throw new InvalidDataException("OpenMeteoAPI did not return with expected data.");
             }
 
-            var weatherData = currentElement.Deserialize<WeatherData>();
+            var weatherData = currentElement.Deserialize<OpenMeteoWeatherData>();
 
             if (weatherData == null)
             {

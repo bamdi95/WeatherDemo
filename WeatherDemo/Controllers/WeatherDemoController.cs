@@ -9,10 +9,10 @@ namespace WeatherDemo.Controllers
     [Route("[controller]")]
     public class WeatherDemoController : ControllerBase
     {
-        private readonly IWeatherProviderAPI _openMeteoAPI;
+        private readonly IWeatherProvider _openMeteoAPI;
         private readonly int _roundingDigitPrecision;
 
-        public WeatherDemoController(IWeatherProviderAPI openMeteoAPI, IOptions<AppSettings> options)
+        public WeatherDemoController(IWeatherProvider openMeteoAPI, IOptions<AppSettings> options)
         {
             _openMeteoAPI = openMeteoAPI;
             _roundingDigitPrecision = options.Value.PositionRoundDigitPrecision;
