@@ -3,7 +3,7 @@ using WeatherDemo.Interfaces;
 
 namespace WeatherDemo.Models.OpenMeteo
 {
-    public class OpenMeteoWeatherData : IOpenMeteoWeatherData
+    public class OpenMeteoWeatherData : IWeatherData
     {
         [JsonPropertyName("time")]
         public DateTime? TimeUTC { get; set; }
