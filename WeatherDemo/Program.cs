@@ -1,3 +1,4 @@
+using StackExchange.Redis;
 using System.Text.Json.Serialization;
 using WeatherDemo.Interfaces;
 using WeatherDemo.Models;
@@ -15,6 +16,8 @@ builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Ad
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(AppSettings)));
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6379"));
 
 builder.Services.AddHttpClient<IWeatherProvider, OpenMeteoAPI>(client => { client.BaseAddress = new Uri("https://api.open-meteo.com/"); });
 

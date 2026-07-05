@@ -19,5 +19,10 @@ namespace WeatherDemo.Models
             Weather = weather;
             IsDay = isDay;
         }
+
+        public WeatherResponse()
+        {
+            
+        }
     }
 }

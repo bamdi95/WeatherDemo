@@ -2,7 +2,7 @@
 
 namespace WeatherDemo.Interfaces
 {
-    public interface IOpenMeteoWeatherData
+    public interface IWeatherData
     {
         public DateTime? TimeUTC { get; set; }
         public double TemperatureCelsius {  get; set; }
