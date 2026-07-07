@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Options;
-using StackExchange.Redis;
-using System.Text.Json;
 using WeatherDemo.Interfaces;
 using WeatherDemo.Models;
 
@@ -13,40 +12,30 @@ namespace WeatherDemo.Controllers
     {
         private readonly IWeatherProvider _openMeteoAPI;
         private readonly int _roundingDigitPrecision;
-        private readonly IDatabase _redis;
+        private readonly HybridCache _cache;
 
-        public WeatherDemoController(IWeatherProvider openMeteoAPI, IOptions<AppSettings> options, IConnectionMultiplexer muxer)
+        public WeatherDemoController(IWeatherProvider openMeteoAPI, IOptions<AppSettings> options, HybridCache cache)
         {
             _openMeteoAPI = openMeteoAPI;
             _roundingDigitPrecision = options.Value.PositionRoundDigitPrecision;
-            _redis = muxer.GetDatabase();
+            _cache = cache;
         }
 
         [HttpGet(Name = "GetCurrentWeather")]
         public async Task<IWeatherResponse> Get([FromQuery] double latitude, [FromQuery] double longitude, CancellationToken token)
         {
+            if (latitude > 90 || latitude < -90 || longitude > 180 || longitude < -180)
+            {
+                throw new InvalidOperationException("Invalid latitude, longitude values");
+            }
+
             latitude = Math.Round(latitude, _roundingDigitPrecision);
             longitude = Math.Round(longitude, _roundingDigitPrecision);
 
-            var key = $"{latitude}:{longitude}";
+            var key = FormattableString.Invariant($"{latitude}:{longitude}");
 
-            var json = await _redis.StringGetAsync(key);
-            IWeatherResponse? response;
-            if (json.HasValue)
-            {
-                response = JsonSerializer.Deserialize<WeatherResponse>(json.ToString());
-                if (response != null)
-                {
-                    return response;
-                }
-            }
-
-            var result = await _openMeteoAPI.GetWeatherDataAsync(latitude, longitude, token);
-            response = new WeatherResponse(result.TimeUTC, result.TemperatureCelsius, result.Weather.ToString(), result.IsDay);
-            var setTask = _redis.StringSetAsync(key, JsonSerializer.Serialize<IWeatherResponse>(response));
-            var expireTask = _redis.KeyExpireAsync(key, TimeSpan.FromSeconds(3600));
-            await Task.WhenAll(setTask, expireTask);
-            return response;
+            return await _cache.GetOrCreateAsync(key,
+                async cancel => await _openMeteoAPI.GetWeatherDataAsync(latitude, longitude, cancel), cancellationToken: token);
         }
     }
 }
