@@ -2,6 +2,6 @@
 {
     public interface IWeatherProvider
     {
-        public Task<IWeatherData> GetWeatherDataAsync(double latitude, double longitude, CancellationToken token);
+        public Task<IWeatherResponse> GetWeatherDataAsync(double latitude, double longitude, CancellationToken token);
     }
 }

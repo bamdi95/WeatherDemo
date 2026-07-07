@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Text.Json;
 using WeatherDemo.Interfaces;
+using WeatherDemo.Models;
 using WeatherDemo.Models.OpenMeteo;
 
 namespace WeatherDemo.Services
@@ -17,7 +18,7 @@ namespace WeatherDemo.Services
             _logger = logger;
         }
 
-        public async Task<IWeatherData> GetWeatherDataAsync(double latitude, double longitude, CancellationToken token)
+        public async Task<IWeatherResponse> GetWeatherDataAsync(double latitude, double longitude, CancellationToken token)
         {
             _logger.LogInformation("Getting weather data from open-meteo api for {Latitude}, {Longitude}", latitude, longitude);
 
@@ -44,7 +45,47 @@ namespace WeatherDemo.Services
                 weatherData.TimeUTC = DateTime.SpecifyKind(weatherData.TimeUTC.Value, DateTimeKind.Utc);
             }
 
-            return weatherData;
+            return new WeatherResponse(weatherData.TimeUTC, weatherData.TemperatureCelsius, MapOpenMeteoWeather(weatherData.Weather), weatherData.IsDay);
+        }
+
+        private string MapOpenMeteoWeather(OpenMeteoWeather weather)
+        {
+            switch (weather)
+            {
+                case OpenMeteoWeather.ClearSky:
+                case OpenMeteoWeather.MainlyClear:
+                    return "Clear";
+                case OpenMeteoWeather.PartlyCloudy:
+                case OpenMeteoWeather.Overcast:
+                    return "Cloudy";
+                case OpenMeteoWeather.Fog:
+                case OpenMeteoWeather.RimeFog:
+                    return "Fog";
+                case OpenMeteoWeather.LightDrizzle:
+                case OpenMeteoWeather.ModerateDrizzle:
+                case OpenMeteoWeather.DenseDrizzle:
+                case OpenMeteoWeather.LightFreezingDrizzle:
+                case OpenMeteoWeather.DenseFreezingDrizzle:
+                case OpenMeteoWeather.SlightRain:
+                case OpenMeteoWeather.ModerateRain:
+                case OpenMeteoWeather.HeavyRain:
+                case OpenMeteoWeather.LightFreezingRain:
+                case OpenMeteoWeather.HeavyFreezingRain:
+                case OpenMeteoWeather.SlightRainShower:
+                case OpenMeteoWeather.ModerateRainShower:
+                case OpenMeteoWeather.ViolentRainShower:
+                    return "Rain";
+                case OpenMeteoWeather.SlightSnowfall:
+                case OpenMeteoWeather.ModerateSnowfall:
+                case OpenMeteoWeather.HeavySnowfall:
+                case OpenMeteoWeather.SnowGrains:
+                case OpenMeteoWeather.SlightSnowShower:
+                case OpenMeteoWeather.HeavySnowShower:
+                    return "Snow";
+                case OpenMeteoWeather.Thunderstorm:
+                    return "Thunderstorm";
+                default: throw new ArgumentException($"Can not parse open meteo {weather}");
+            }
         }
     }
 }

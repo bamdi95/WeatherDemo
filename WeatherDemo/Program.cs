@@ -1,8 +1,6 @@
-using StackExchange.Redis;
-using System.Text.Json.Serialization;
 using WeatherDemo.Interfaces;
+using WeatherDemo.JsonConverters;
 using WeatherDemo.Models;
-using WeatherDemo.Models.OpenMeteo;
 using WeatherDemo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,12 +10,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Add(new JsonNumberEnumConverter<OpenMeteoWeather>()));
+
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(AppSettings)));
+
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6379"));
+builder.Services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost:6379"; });
+builder.Services.AddHybridCache(options =>
+{
+    options.DefaultEntryOptions = new Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions
+    {
+        Expiration = TimeSpan.FromMinutes(15),
+        LocalCacheExpiration = TimeSpan.FromMinutes(15),
+    };
+}).AddSerializer<IWeatherResponse, WeatherResponseCacheSerializer>();
 
 builder.Services.AddHttpClient<IWeatherProvider, OpenMeteoAPI>(client => { client.BaseAddress = new Uri("https://api.open-meteo.com/"); });
 
