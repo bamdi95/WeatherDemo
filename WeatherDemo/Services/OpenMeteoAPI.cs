@@ -48,19 +48,19 @@ namespace WeatherDemo.Services
             return new WeatherResponse(weatherData.TimeUTC, weatherData.TemperatureCelsius, MapOpenMeteoWeather(weatherData.Weather), weatherData.IsDay);
         }
 
-        private string MapOpenMeteoWeather(OpenMeteoWeather weather)
+        private WeatherTpye MapOpenMeteoWeather(OpenMeteoWeather weather)
         {
             switch (weather)
             {
                 case OpenMeteoWeather.ClearSky:
                 case OpenMeteoWeather.MainlyClear:
-                    return "Clear";
+                    return WeatherTpye.Clear;
                 case OpenMeteoWeather.PartlyCloudy:
                 case OpenMeteoWeather.Overcast:
-                    return "Cloudy";
+                    return WeatherTpye.Cloudy;
                 case OpenMeteoWeather.Fog:
                 case OpenMeteoWeather.RimeFog:
-                    return "Fog";
+                    return WeatherTpye.Fog;
                 case OpenMeteoWeather.LightDrizzle:
                 case OpenMeteoWeather.ModerateDrizzle:
                 case OpenMeteoWeather.DenseDrizzle:
@@ -74,17 +74,17 @@ namespace WeatherDemo.Services
                 case OpenMeteoWeather.SlightRainShower:
                 case OpenMeteoWeather.ModerateRainShower:
                 case OpenMeteoWeather.ViolentRainShower:
-                    return "Rain";
+                    return WeatherTpye.Rain;
                 case OpenMeteoWeather.SlightSnowfall:
                 case OpenMeteoWeather.ModerateSnowfall:
                 case OpenMeteoWeather.HeavySnowfall:
                 case OpenMeteoWeather.SnowGrains:
                 case OpenMeteoWeather.SlightSnowShower:
                 case OpenMeteoWeather.HeavySnowShower:
-                    return "Snow";
+                    return WeatherTpye.Snow;
                 case OpenMeteoWeather.Thunderstorm:
-                    return "Thunderstorm";
-                default: return "Unknown";
+                    return WeatherTpye.Thunderstorm;
+                default: return WeatherTpye.Unknown;
             }
         }
     }

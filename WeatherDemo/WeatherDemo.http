@@ -5,11 +5,6 @@ Accept: application/json
 
 ###budapest
 
-GET {{WeatherDemo_HostAddress}}/weatherdemo/?latitude=0&longitude=0
-Accept: application/json
-
-###
-
 GET {{WeatherDemo_HostAddress}}/weatherdemo/46.264489/20.164786
 Accept: application/json
 
