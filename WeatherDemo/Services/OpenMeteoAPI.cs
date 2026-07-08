@@ -10,7 +10,7 @@ namespace WeatherDemo.Services
     {
         private readonly HttpClient _client;
         private readonly ILogger<OpenMeteoAPI> _logger;
-        private readonly string _relativePath = "v1/forecast?latitude={0}&longitude={1}&current=temperature_2m,weather_code,is_day&forecast_days=1";
+        private const string _relativePath = "v1/forecast?latitude={0}&longitude={1}&current=temperature_2m,weather_code,is_day&forecast_days=1";
 
         public OpenMeteoAPI(HttpClient client, ILogger<OpenMeteoAPI> logger)
         {
@@ -22,7 +22,7 @@ namespace WeatherDemo.Services
         {
             _logger.LogInformation("Getting weather data from open-meteo api for {Latitude}, {Longitude}", latitude, longitude);
 
-            var url = new Uri(_client.BaseAddress ?? throw new BadHttpRequestException("No base url provided for open meteo call."), string.Format(CultureInfo.InvariantCulture, _relativePath, latitude, longitude));
+            var url = new Uri(_client.BaseAddress ?? throw new InvalidOperationException("No base url provided for open meteo call."), string.Format(CultureInfo.InvariantCulture, _relativePath, latitude, longitude));
 
             using var responseStream = await _client.GetStreamAsync(url, token);
 
@@ -37,7 +37,7 @@ namespace WeatherDemo.Services
 
             if (weatherData == null)
             {
-                throw new InvalidDataException("Failed to deserialize weather data.");
+                throw new InvalidDataException("Failed to deserialize OpenMeteoAPI weather data.");
             }
 
             if (weatherData.TimeUTC.HasValue)
@@ -84,7 +84,7 @@ namespace WeatherDemo.Services
                     return "Snow";
                 case OpenMeteoWeather.Thunderstorm:
                     return "Thunderstorm";
-                default: throw new ArgumentException($"Can not parse open meteo {weather}");
+                default: return "Unknown";
             }
         }
     }

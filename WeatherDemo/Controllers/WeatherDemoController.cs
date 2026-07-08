@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Options;
+using System.ComponentModel.DataAnnotations;
 using WeatherDemo.Interfaces;
 using WeatherDemo.Models;
 
@@ -22,13 +23,9 @@ namespace WeatherDemo.Controllers
         }
 
         [HttpGet(Name = "GetCurrentWeather")]
-        public async Task<IWeatherResponse> Get([FromQuery] double latitude, [FromQuery] double longitude, CancellationToken token)
+        [HttpGet("{latitude}/{longitude}")]
+        public async Task<IWeatherResponse> Get([FromRoute][Range(-90, 90)] double latitude, [FromRoute][Range(-180, 180)] double longitude, CancellationToken token)
         {
-            if (latitude > 90 || latitude < -90 || longitude > 180 || longitude < -180)
-            {
-                throw new InvalidOperationException("Invalid latitude, longitude values");
-            }
-
             latitude = Math.Round(latitude, _roundingDigitPrecision);
             longitude = Math.Round(longitude, _roundingDigitPrecision);
 
