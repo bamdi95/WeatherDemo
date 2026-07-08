@@ -1,6 +1,6 @@
 @WeatherDemo_HostAddress = http://localhost:5185
 
-GET {{WeatherDemo_HostAddress}}/weatherdemo/?latitude=47.4984&longitude=19.0404
+GET {{WeatherDemo_HostAddress}}/weatherdemo/47.4984/19.0404
 Accept: application/json
 
 ###budapest
@@ -10,7 +10,12 @@ Accept: application/json
 
 ###
 
-GET {{WeatherDemo_HostAddress}}/weatherdemo/?latitude=46.264489&longitude=20.164786
+GET {{WeatherDemo_HostAddress}}/weatherdemo/46.264489/20.164786
 Accept: application/json
 
 ###Dani
+
+GET {{WeatherDemo_HostAddress}}/weatherdemo/kiskuty/20.164786
+Accept: application/json
+
+###error

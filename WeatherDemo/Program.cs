@@ -16,6 +16,9 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 builder.Services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost:6379"; });
 builder.Services.AddHybridCache(options =>
 {
@@ -26,7 +29,7 @@ builder.Services.AddHybridCache(options =>
     };
 }).AddSerializer<IWeatherResponse, WeatherResponseCacheSerializer>();
 
-builder.Services.AddHttpClient<IWeatherProvider, OpenMeteoAPI>(client => { client.BaseAddress = new Uri("https://api.open-meteo.com/"); });
+builder.Services.AddHttpClient<IWeatherProvider, OpenMeteoAPI>(client => { client.BaseAddress = new Uri("https://api.open-meteo.com/"); }).AddStandardResilienceHandler();
 
 var app = builder.Build();
 
@@ -39,6 +42,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseExceptionHandler();
+
+app.UseStatusCodePages();
 
 app.MapControllers();
 

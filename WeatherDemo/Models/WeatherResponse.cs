@@ -2,7 +2,7 @@
 
 namespace WeatherDemo.Models
 {
-    public class WeatherResponse : IWeatherResponse
+    public record WeatherResponse : IWeatherResponse
     {
         public DateTime? DateOfMeasurementUTC { get; set; }
 
