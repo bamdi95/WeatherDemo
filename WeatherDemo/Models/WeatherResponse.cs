@@ -8,11 +8,11 @@ namespace WeatherDemo.Models
 
         public double TemperatureCelsius { get; set; }
 
-        public string? Weather { get; set; }
+        public WeatherTpye Weather { get; set; }
 
         public bool IsDay { get; set; }
 
-        public WeatherResponse(DateTime? dateOfMeasurementUTC, double temperatureC, string? weather, bool isDay)
+        public WeatherResponse(DateTime? dateOfMeasurementUTC, double temperatureC, WeatherTpye weather, bool isDay)
         {
             DateOfMeasurementUTC = dateOfMeasurementUTC;
             TemperatureCelsius = temperatureC;

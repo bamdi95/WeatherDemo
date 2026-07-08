@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
 using System.Buffers;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using WeatherDemo.Interfaces;
 using WeatherDemo.Models;
 
@@ -8,7 +9,10 @@ namespace WeatherDemo.JsonConverters
 {
     public class WeatherResponseCacheSerializer : IHybridCacheSerializer<IWeatherResponse>
     {
-        private static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions();
+        private static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
+        {
+            Converters = { new JsonStringEnumConverter() }
+        };
 
         public IWeatherResponse Deserialize(ReadOnlySequence<byte> source)
         {

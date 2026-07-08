@@ -22,8 +22,7 @@ namespace WeatherDemo.Controllers
             _cache = cache;
         }
 
-        [HttpGet(Name = "GetCurrentWeather")]
-        [HttpGet("{latitude}/{longitude}")]
+        [HttpGet("{latitude}/{longitude}", Name = "GetCurrentWeatherForPosition")]
         public async Task<IWeatherResponse> Get([FromRoute][Range(-90, 90)] double latitude, [FromRoute][Range(-180, 180)] double longitude, CancellationToken token)
         {
             latitude = Math.Round(latitude, _roundingDigitPrecision);

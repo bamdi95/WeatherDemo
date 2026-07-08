@@ -1,10 +1,12 @@
-﻿namespace WeatherDemo.Interfaces
+﻿using WeatherDemo.Models;
+
+namespace WeatherDemo.Interfaces
 {
     public interface IWeatherResponse
     {
         DateTime? DateOfMeasurementUTC { get; }
         double TemperatureCelsius { get; }
-        string? Weather { get; }
+        WeatherTpye Weather { get; }
         bool IsDay { get; }
     }
 }
