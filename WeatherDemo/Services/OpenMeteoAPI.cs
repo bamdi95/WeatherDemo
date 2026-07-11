@@ -40,6 +40,8 @@ namespace WeatherDemo.Services
                 throw new InvalidDataException("Failed to deserialize OpenMeteoAPI weather data.");
             }
 
+            _logger.LogInformation("Got weather data: {@weatherData}", weatherData);
+
             if (weatherData.TimeUTC.HasValue)
             {
                 weatherData.TimeUTC = DateTime.SpecifyKind(weatherData.TimeUTC.Value, DateTimeKind.Utc);
