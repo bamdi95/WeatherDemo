@@ -29,8 +29,7 @@ try
     {
         options.DefaultEntryOptions = new Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions
         {
-            Expiration = TimeSpan.FromMinutes(15),
-            LocalCacheExpiration = TimeSpan.FromMinutes(5),
+            LocalCacheExpiration = TimeSpan.FromMinutes(builder.Configuration.Get<AppSettings>()?.CacheExpiaryInMinutes ?? 5),
         };
         options.MaximumPayloadBytes = 1024 * 1024;
     });
