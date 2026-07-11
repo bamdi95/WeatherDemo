@@ -1,7 +1,6 @@
 using Serilog;
 using System.Text.Json.Serialization;
 using WeatherDemo.Interfaces;
-using WeatherDemo.JsonConverters;
 using WeatherDemo.Models;
 using WeatherDemo.Services;
 
@@ -34,7 +33,7 @@ try
             Expiration = TimeSpan.FromMinutes(15),
             LocalCacheExpiration = TimeSpan.FromMinutes(15),
         };
-    }).AddSerializer<IWeatherResponse, WeatherResponseCacheSerializer>();
+    });
 
     builder.Services.AddHttpClient<IWeatherProvider, OpenMeteoAPI>(client => { client.BaseAddress = new Uri("https://api.open-meteo.com/"); }).AddStandardResilienceHandler();
 
@@ -66,5 +65,3 @@ finally
 {
     Log.CloseAndFlush();
 }
-
-

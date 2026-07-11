@@ -2,7 +2,7 @@
 
 namespace WeatherDemo.Models
 {
-    public record WeatherResponse : IWeatherResponse
+    public record WeatherResponse
     {
         public DateTime? DateOfMeasurementUTC { get; set; }
 
@@ -12,17 +12,12 @@ namespace WeatherDemo.Models
 
         public bool IsDay { get; set; }
 
-        public WeatherResponse(DateTime? dateOfMeasurementUTC, double temperatureC, WeatherTpye weather, bool isDay)
+        public WeatherResponse(DateTime? DateOfMeasurementUTC, double TemperatureCelsius, WeatherTpye Weather, bool IsDay)
         {
-            DateOfMeasurementUTC = dateOfMeasurementUTC;
-            TemperatureCelsius = temperatureC;
-            Weather = weather;
-            IsDay = isDay;
-        }
-
-        public WeatherResponse()
-        {
-            
+            this.DateOfMeasurementUTC = DateOfMeasurementUTC;
+            this.TemperatureCelsius = TemperatureCelsius;
+            this.Weather = Weather;
+            this.IsDay = IsDay;
         }
     }
 }

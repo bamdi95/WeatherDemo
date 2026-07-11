@@ -18,7 +18,7 @@ namespace WeatherDemo.Services
             _logger = logger;
         }
 
-        public async Task<IWeatherResponse> GetWeatherDataAsync(double latitude, double longitude, CancellationToken token)
+        public async Task<WeatherResponse> GetWeatherDataAsync(double latitude, double longitude, CancellationToken token)
         {
             _logger.LogInformation("Getting weather data from open-meteo api for {Latitude}, {Longitude}", latitude, longitude);
 
