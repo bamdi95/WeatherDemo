@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using Serilog;
 using System.Text.Json.Serialization;
 using WeatherDemo.Interfaces;
@@ -29,7 +30,7 @@ try
     {
         options.DefaultEntryOptions = new Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions
         {
-            LocalCacheExpiration = TimeSpan.FromMinutes(builder.Configuration.Get<AppSettings>()?.CacheExpiaryInMinutes ?? 5),
+            LocalCacheExpiration = TimeSpan.FromMinutes(builder.Configuration.GetSection(nameof(AppSettings)).Get<AppSettings>()?.CacheExpiaryInMinutes ?? 5),
         };
         options.MaximumPayloadBytes = 1024 * 1024;
     });
