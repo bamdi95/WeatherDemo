@@ -25,14 +25,14 @@ try
     builder.Services.AddProblemDetails();
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-    builder.Services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost:6379"; });
     builder.Services.AddHybridCache(options =>
     {
         options.DefaultEntryOptions = new Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions
         {
             Expiration = TimeSpan.FromMinutes(15),
-            LocalCacheExpiration = TimeSpan.FromMinutes(15),
+            LocalCacheExpiration = TimeSpan.FromMinutes(5),
         };
+        options.MaximumPayloadBytes = 1024 * 1024;
     });
 
     builder.Services.AddHttpClient<IWeatherProvider, OpenMeteoAPI>(client => { client.BaseAddress = new Uri("https://api.open-meteo.com/"); }).AddStandardResilienceHandler();
