@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using Serilog;
 using System.Text.Json.Serialization;
+using WeatherDemo.Auth;
 using WeatherDemo.Interfaces;
 using WeatherDemo.Models;
 using WeatherDemo.Services;
@@ -39,6 +40,12 @@ try
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+
+    builder.Services
+    .AddAuthentication(ApiKeyAuthenticationOptions.DefaultScheme)
+    .AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(
+        ApiKeyAuthenticationOptions.DefaultScheme, _ => { });
+    builder.Services.AddAuthorization();
 
     var app = builder.Build();
 

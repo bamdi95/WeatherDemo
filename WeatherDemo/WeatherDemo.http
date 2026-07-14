@@ -6,6 +6,7 @@ Accept: application/json
 ###budapest
 
 GET {{WeatherDemo_HostAddress}}/weatherdemo/46.264489/20.164786
+X-API-Key: {{MyApiKey}}
 Accept: application/json
 
 ###Dani
