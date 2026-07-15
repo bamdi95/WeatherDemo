@@ -1,6 +1,6 @@
 ﻿namespace WeatherDemo.Models
 {
-    public enum WeatherTpye
+    public enum WeatherType
     {
         Clear,
         Cloudy,

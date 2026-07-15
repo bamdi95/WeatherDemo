@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
+using WeatherDemo.Options;
 
 namespace WeatherDemo.Auth
 {
@@ -11,7 +13,7 @@ namespace WeatherDemo.Auth
     IOptionsMonitor<ApiKeyAuthenticationOptions> options,
     ILoggerFactory logger,
     UrlEncoder encoder,
-    IConfiguration configuration)
+    IOptionsMonitor<ApiKeySettings> apiKeyOptions)
     : AuthenticationHandler<ApiKeyAuthenticationOptions>(options, logger, encoder)
     {
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -22,7 +24,7 @@ namespace WeatherDemo.Auth
                 return Task.FromResult(AuthenticateResult.NoResult());
             }
 
-            var expectedKey = configuration["ApiKey"];
+            var expectedKey = apiKeyOptions.CurrentValue.ApiKey;
             if (string.IsNullOrEmpty(expectedKey))
             {
                 return Task.FromResult(

@@ -1,9 +1,11 @@
-using Microsoft.Extensions.Options;
 using Serilog;
+
 using System.Text.Json.Serialization;
+
 using WeatherDemo.Auth;
+using WeatherDemo.Exceptions;
 using WeatherDemo.Interfaces;
-using WeatherDemo.Models;
+using WeatherDemo.Options;
 using WeatherDemo.Services;
 
 Log.Logger = new LoggerConfiguration()
@@ -22,7 +24,21 @@ try
 
     builder.Services.AddControllers().AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 
-    builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(AppSettings)));
+    builder.Services
+        .AddOptions<AppSettings>()
+        .Bind(builder.Configuration.GetSection(nameof(AppSettings)))
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+
+    builder.Services
+        .AddOptions<ApiKeySettings>()
+        .Bind(builder.Configuration.GetSection(nameof(ApiKeySettings)))
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+
+    var appSettings = builder.Configuration
+        .GetSection(nameof(AppSettings))
+        .Get<AppSettings>() ?? new AppSettings();
 
     builder.Services.AddProblemDetails();
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -31,12 +47,13 @@ try
     {
         options.DefaultEntryOptions = new Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions
         {
-            LocalCacheExpiration = TimeSpan.FromMinutes(builder.Configuration.GetSection(nameof(AppSettings)).Get<AppSettings>()?.CacheExpiaryInMinutes ?? 5),
+            LocalCacheExpiration = TimeSpan.FromMinutes(appSettings.CacheExpiryInMinutes),
+            Expiration = TimeSpan.FromMinutes(appSettings.CacheExpiryInMinutes),
         };
         options.MaximumPayloadBytes = 1024 * 1024;
     });
 
-    builder.Services.AddHttpClient<IWeatherProvider, OpenMeteoAPI>(client => { client.BaseAddress = new Uri("https://api.open-meteo.com/"); }).AddStandardResilienceHandler();
+    builder.Services.AddHttpClient<IWeatherProvider, OpenMeteoWeatherProvider>(client => { client.BaseAddress = new Uri("https://api.open-meteo.com/"); }).AddStandardResilienceHandler();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -60,6 +77,8 @@ try
     app.UseExceptionHandler();
     app.UseStatusCodePages();
     app.UseHttpsRedirection();
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.MapControllers();
 
     app.Run();

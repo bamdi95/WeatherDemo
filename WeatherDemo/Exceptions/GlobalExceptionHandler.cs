@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
+namespace WeatherDemo.Exceptions;
+
 internal sealed class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly IProblemDetailsService _problemDetailsService;
@@ -17,6 +19,10 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
         _logger.LogError(exception, "Unhandled exception occurred. TraceId: {TraceId}",
             httpContext.TraceIdentifier);
 
+        var isDevelopment = httpContext.RequestServices
+            .GetRequiredService<IHostEnvironment>()
+            .IsDevelopment();
+
         var (status, title) = exception switch
         {
             InvalidDataException => (StatusCodes.Status502BadGateway, "Bad Gateway"),
@@ -29,12 +35,8 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
         {
             Status = status,
             Title = title,
-            Type = exception.GetType().Name,
-            Detail = httpContext.RequestServices
-                                 .GetRequiredService<IHostEnvironment>()
-                                 .IsDevelopment()
-                     ? exception.Message
-                     : null,
+            Type = isDevelopment ? exception.GetType().Name : null,
+            Detail = isDevelopment ? exception.Message : null,
             Instance = httpContext.Request.Path
         };
 

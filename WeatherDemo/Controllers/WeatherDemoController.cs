@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 using WeatherDemo.Interfaces;
 using WeatherDemo.Models;
+using WeatherDemo.Options;
 
 namespace WeatherDemo.Controllers
 {
@@ -13,13 +14,13 @@ namespace WeatherDemo.Controllers
     [Authorize]
     public class WeatherDemoController : ControllerBase
     {
-        private readonly IWeatherProvider _openMeteoAPI;
+        private readonly IWeatherProvider _weatherProvider;
         private readonly int _roundingDigitPrecision;
         private readonly HybridCache _cache;
 
-        public WeatherDemoController(IWeatherProvider openMeteoAPI, IOptions<AppSettings> options, HybridCache cache)
+        public WeatherDemoController(IWeatherProvider weatherProvider, IOptions<AppSettings> options, HybridCache cache)
         {
-            _openMeteoAPI = openMeteoAPI;
+            _weatherProvider = weatherProvider;
             _roundingDigitPrecision = options.Value.PositionRoundDigitPrecision;
             _cache = cache;
         }
@@ -33,7 +34,7 @@ namespace WeatherDemo.Controllers
             var key = FormattableString.Invariant($"{latitude}:{longitude}");
 
             return await _cache.GetOrCreateAsync(key,
-                async cancel => await _openMeteoAPI.GetWeatherDataAsync(latitude, longitude, cancel), cancellationToken: token);
+                async cancel => await _weatherProvider.GetWeatherDataAsync(latitude, longitude, cancel), cancellationToken: token);
         }
     }
 }
